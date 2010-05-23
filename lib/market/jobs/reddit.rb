@@ -22,7 +22,7 @@ class Reddit < Job
     end
 
     def fields(result)
-      result.only("author", "over_18", "permalink", "url", "ups", "num_comments", "score", "domain", "downs", "subreddit", "title").merge("description" => result['selftext'])
+      result.only("author", "over_18", "permalink", "url", "ups", "num_comments", "score", "domain", "downs", "subreddit", "title").merge("description" => result['selftext'].to_s)
     end
   end
 end

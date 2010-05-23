@@ -1,4 +1,5 @@
-#require 'resque/tasks'
+require 'rubygems'
+require 'resque/tasks'
 require 'rake/testtask'
 
 task "resque:setup" do
