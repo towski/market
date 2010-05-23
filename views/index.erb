@@ -1,0 +1,14 @@
+<form method='post'>
+  <input name='query' type='text' value='<%= params[:query] %>'/>
+  <input type='submit' />
+</form>
+<ul>
+<% @results.each do |result| %>
+  <li>
+    <a href='<%= h result.url %>' onclick="jx.load('/links/<%= result.id %>/increment', function(data){})">
+      <%= h result.title %>
+     </a>
+    <%= h result.description[0..200] %>
+  </li>
+<% end %>
+</ul>
