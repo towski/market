@@ -1,9 +1,9 @@
 require 'rubygems'
 require 'config'
 
-[Reddit, Github].each do |site|
-  domain = site::DOMAIN
-  name = site::NAME
+[Reddit, Github, Google].each do |site|
+  domain = site.domain
+  name = site.name
   site = Site.first(:domain => domain)
   if !site
     site = Site.create(:name => name, :domain => domain)

@@ -1,27 +1,28 @@
-class Reddit
-  @queue = :search_request
-  FIELDS = ["author", "over_18", "permalink", "url", "ups", "num_comments", "score", "domain", "downs", "subreddit", "title"]
-  URL = "http://api.reddit.com/search?q=%s" 
-  DOMAIN = "reddit.com"
-  NAME = "reddit"
-  IDENTITY = ["author", "title"]
+class Reddit < Job
+  class << self
+    def url
+      "http://api.reddit.com/search?q=%s" 
+    end
 
-  def self.perform(query)
-    response = Curl::Easy.perform(URL % query)
-    parser = Yajl::Parser.new
-    results = parser.parse(response.body_str)["data"]["children"]
-    site = Site.first(:domain => DOMAIN)
-    results.map!{|res| res["data"] }
-    results.each do |result|
-      id = result.delete('id')
-      result.merge!('true_id' => id)
-      search_result = site.search_results.first(result.only(*IDENTITY).merge(:query => query))
-      if search_result
-        search_result.set(result.only(*FIELDS))
-      else
-        description = result['selftext']
-        site.search_results.create result.only(*FIELDS).merge(:query => query, :description => description)
-      end
+    def domain
+      "reddit.com"
+    end
+
+    def name
+      "reddit"
+    end
+
+    def prepare_results(results)
+      results = results["data"]["children"]
+      results.map{|res| res["data"] }
+    end
+
+    def identity(result)
+      result.only("author", "title")
+    end
+
+    def fields(result)
+      result.only("author", "over_18", "permalink", "url", "ups", "num_comments", "score", "domain", "downs", "subreddit", "title").merge("description" => result['selftext'])
     end
   end
 end
